@@ -16,8 +16,6 @@ services:
       context: ./back-end-arrastech/techPoints/techPoints
       dockerfile: Dockerfile
     container_name: backtechpoints_container
-    depends_on:
-      - mysql
     environment:
       SERVER_PORT: 8080
       PASSWORD: password
