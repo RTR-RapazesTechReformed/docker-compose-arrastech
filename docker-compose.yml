@@ -34,5 +34,5 @@ services:
     networks:
       - minha-rede-publica
 networks:
-  minha_rede:
+  minha-rede-publica:
     driver: bridge
