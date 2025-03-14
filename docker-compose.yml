@@ -13,7 +13,7 @@ services:
 
   backtechpoints:
     build:
-      context: ./BackTechPoints/techPoints/techPoints
+      context: ./back-end-arrastech/techPoints/techPoints
       dockerfile: Dockerfile
     container_name: backtechpoints_container
     depends_on:
