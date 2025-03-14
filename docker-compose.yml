@@ -9,7 +9,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - minha_rede
+      - minha_rede_publica
 
   backtechpoints:
     build:
@@ -21,7 +21,7 @@ services:
     environment:
       SERVER_PORT: 8080
       PASSWORD: password
-      DB_HOST: mysql # Colocar o IP da EC2
+      DB_HOST: "10.0.1.24" # Colocar o IP da EC2
       DB_PORT: 3306
       DB_NAME: techpointsdb
       DB_USER: user
