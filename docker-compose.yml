@@ -30,7 +30,7 @@ services:
     networks:
       - minha-rede
       
-    bdtechpoints:
+  bdtechpoints:
     image: edsonmorronogueira/bdtechpoints:latest
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
