@@ -29,3 +29,17 @@ services:
       - "8080:8080"
     networks:
       - minha-rede
+      
+    bdtechpoints:
+    image: edsonmorronogueira/bdtechpoints:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_: mysql # Colocar o IP da EC2
+      DB_PORT: 3306
+      MYSQL_DATABASE: techpointsdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    networks:
+      - minha-rede
