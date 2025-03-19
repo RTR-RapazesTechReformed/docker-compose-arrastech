@@ -8,8 +8,6 @@ services:
       - backtechpoints
     ports:
       - "80:80"
-    networks:
-      - minha-rede-publica
 
   backtechpoints:
     build:
@@ -31,8 +29,3 @@ services:
       PASSWORD_EMAIL_SPRING: senha_email
     ports:
       - "8080:8080"
-    networks:
-      - minha-rede-publica
-networks:
-  minha-rede-publica:
-    driver: bridge
