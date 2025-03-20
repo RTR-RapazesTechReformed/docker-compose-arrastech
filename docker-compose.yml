@@ -4,6 +4,8 @@ services:
       context: ./front-end-arrastech
       dockerfile: Dockerfile
     container_name: fronttechpoints_container
+    network_mode: "host"
+    restart: on-failure
     depends_on:
       - backtechpoints
     ports:
@@ -27,5 +29,7 @@ services:
       RABBITMQ_USER: guest
       RABBITMQ_PASSWORD: guest
       PASSWORD_EMAIL_SPRING: senha_email
+    network_mode: "host"
+    restart: on-failure
     ports:
       - "8080:8080"
