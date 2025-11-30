@@ -117,6 +117,19 @@ services:
     networks:
       - kafka-network
 
+  card_scanner:
+    build: ./scanner
+    container_name: card_scanner
+    ports:
+      - "5001:5000"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=bulldog200
+      - MYSQL_DATABASE=rtr
+    networks:
+      - kafka-network
+
 networks:
   kafka-network:
     driver: bridge
@@ -126,4 +139,5 @@ volumes:
   zookeeper-logs:
   kafka-data:
   mysql-data:
+
 
