@@ -1,41 +1,128 @@
-networks:
-  techpoints_network:
-    external: true
-    
 services:
-  fronttechpoints:
-    build:
-      context: ./front-end-arrastech
-      dockerfile: Dockerfile
-    container_name: fronttechpoints_container
-    networks:
-      - techpoints_network
-    restart: on-failure
-    depends_on:
-      - backtechpoints
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: zookeeper
     ports:
-      - "80:80"
-
-  backtechpoints:
-    build:
-      context: ./back-end-arrastech/techPoints/techPoints
-      dockerfile: Dockerfile
-    container_name: backtechpoints_container
+      - "2181:2181"
     environment:
-      SERVER_PORT: 8080
-      PASSWORD: password
-      DB_HOST: "10.0.1.234" # Colocar o IP da EC2
-      DB_PORT: 3306
-      DB_NAME: techpointsdb
-      DB_USER: user
-      DB_PASSWORD: password
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: guest
-      RABBITMQ_PASSWORD: guest
-      PASSWORD_EMAIL_SPRING: senha_email
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - techpoints_network
-    restart: on-failure
+      - kafka-network
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_MESSAGE_MAX_BYTES: 10485760
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 10485760
+      KAFKA_MAX_REQUEST_SIZE: 10485760
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-network
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka-init
+    depends_on:
+      - kafka
+    networks:
+      - kafka-network
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "
+      echo 'Aguardando Kafka estar pronto...'
+      sleep 30
+
+      echo 'Criando tópicos...'
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --topic inventory-movement-topic --replication-factor 1 --partitions 3
+      kafka-topics --bootstrap-server kafka:9093 --create --if-not-exists --topic inventory-movement-dlq --replication-factor 1 --partitions 1
+
+      echo 'Listando tópicos criados:'
+      kafka-topics --bootstrap-server kafka:9093 --list
+
+      echo 'Tópicos criados com sucesso!'
+      "
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9093
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    depends_on:
+      - kafka
+      - kafka-init
+    networks:
+      - kafka-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: bulldog200
+      MYSQL_DATABASE: rtr
+    networks:
+      - kafka-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  store-manager-api:
+    build: ./store-manager-api
     ports:
       - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/rtr
+      DB_USER: root
+      DB_PASS: bulldog200
+      SERVER_PORT: 8080
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+    depends_on:
+      - kafka
+      - mysql
+    networks:
+      - kafka-network
+
+  storemanager-frontend:
+    build:
+      context: ./storemanager-frontend
+      dockerfile: Dockerfile
+    container_name: storemanager-frontend
+    ports:
+      - "80:80"
+    networks:
+      - kafka-network
+
+networks:
+  kafka-network:
+    driver: bridge
+
+volumes:
+  zookeeper-data:
+  zookeeper-logs:
+  kafka-data:
+  mysql-data:
