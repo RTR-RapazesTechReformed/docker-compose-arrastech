@@ -92,7 +92,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   store-manager-api:
-    build: ./store-manager-api
+    build: ./store-manager-api/store-manager-api
     ports:
       - "8080:8080"
     environment:
@@ -126,3 +126,4 @@ volumes:
   zookeeper-logs:
   kafka-data:
   mysql-data:
+
