@@ -118,7 +118,7 @@ services:
       - kafka-network
 
   card_scanner:
-    build: ./scanner
+    build: ./card-scanner
     container_name: card_scanner
     ports:
       - "5001:5000"
@@ -139,5 +139,3 @@ volumes:
   zookeeper-logs:
   kafka-data:
   mysql-data:
-
-
