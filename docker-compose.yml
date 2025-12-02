@@ -90,6 +90,7 @@ services:
       - kafka-network
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   store-manager-api:
     build: ./store-manager-api/store-manager-api
