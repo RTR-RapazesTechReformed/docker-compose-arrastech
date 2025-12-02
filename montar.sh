@@ -46,6 +46,9 @@ echo "🚀 Subindo os containers com Docker Compose..."
 cd docker-compose-arrastech
 cp docker-compose.yml ..
 cd ..
+
+cp store-manager-api/init.sql ./init.sql
+
 sudo docker-compose up --build -d
 
 echo "🧹 Removendo repositórios clonados..."
