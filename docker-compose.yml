@@ -83,7 +83,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:mysql://10-0-2-60:3306/rtr #${mysql}
+      DB_URL: jdbc:mysql://10.0.2.60:3306/rtr #${mysql}
       DB_USER: root
       DB_PASS: bulldog200
       SERVER_PORT: 8080
@@ -109,7 +109,7 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - MYSQL_HOST=10-0-2-60 #${mysql}
+      - MYSQL_HOST=10.0.2.60 #${mysql}
       - MYSQL_USER=root
       - MYSQL_PASSWORD=bulldog200
       - MYSQL_DATABASE=rtr
