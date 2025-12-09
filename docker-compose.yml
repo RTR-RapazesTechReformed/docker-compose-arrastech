@@ -78,18 +78,33 @@ services:
     networks:
       - kafka-network
 
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: bulldog200
+      MYSQL_DATABASE: rtr
+    networks:
+      - kafka-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
   store-manager-api:
     build: ./store-manager-api/store-manager-api
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:mysql://10.0.2.60:3306/rtr #${mysql}
+      DB_URL: jdbc:mysql://mysql:3306/rtr
       DB_USER: root
       DB_PASS: bulldog200
       SERVER_PORT: 8080
       KAFKA_BOOTSTRAP_SERVERS: kafka:9093
     depends_on:
       - kafka
+      - mysql
     networks:
       - kafka-network
 
@@ -109,10 +124,12 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - MYSQL_HOST=10.0.2.60 #${mysql}
+      - MYSQL_HOST=mysql
       - MYSQL_USER=root
       - MYSQL_PASSWORD=bulldog200
       - MYSQL_DATABASE=rtr
+    depends_on:
+      - mysql
     networks:
       - kafka-network
 
@@ -134,3 +151,4 @@ volumes:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
+  mysql-data:
