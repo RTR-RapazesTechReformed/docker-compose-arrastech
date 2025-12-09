@@ -48,7 +48,7 @@ cd docker-compose-arrastech
 cp docker-compose.yml ..
 cd ..
 
-sudo docker-compose up --build -d
+cp store-manager-api/init.sql ./init.sql
 
 echo "🧹 Removendo repositórios clonados..."
 
