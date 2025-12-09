@@ -37,8 +37,8 @@ fi
 
 
 echo "📥 Clonando repositórios..."
-git clone https://github.com/RTR-RapazesTechReformed/storemanager-frontend.git
-git clone https://github.com/RTR-RapazesTechReformed/store-manager-api.git
+git clone -b merge/front-feats-with-deploy https://github.com/RTR-RapazesTechReformed/storemanager-frontend.git 
+git clone -b backup/main-with-deploy https://github.com/RTR-RapazesTechReformed/store-manager-api.git
 git clone https://github.com/RTR-RapazesTechReformed/docker-compose-arrastech.git
 git clone -b feature/deploy-init-actions https://github.com/RTR-RapazesTechReformed/card-scanner.git
 git clone https://github.com/RTR-RapazesTechReformed/store-manager-price-model.git
@@ -48,13 +48,11 @@ cd docker-compose-arrastech
 cp docker-compose.yml ..
 cd ..
 
-cp store-manager-api/init.sql ./init.sql
-
 sudo docker-compose up --build -d
 
 echo "🧹 Removendo repositórios clonados..."
 
-rm -rf docker-compose-arrastech card-scanner store-manager-api storemanager-frontend store-manager-price-model docker-compose.yml 
+rm -rf docker-compose-arrastech card-scanner store-manager-api storemanager-frontend store-manager-price-model docker-compose.yml
 
 echo "✅ Configuração concluída!"
 echo "Agora você pode rodar contêineres conectados à rede privada."
