@@ -37,8 +37,8 @@ fi
 
 
 echo "📥 Clonando repositórios..."
-git clone -b merge/front-feats-with-deploy https://github.com/RTR-RapazesTechReformed/storemanager-frontend.git 
-git clone -b backup/main-with-deploy https://github.com/RTR-RapazesTechReformed/store-manager-api.git
+git clone https://github.com/RTR-RapazesTechReformed/storemanager-frontend.git 
+git clone https://github.com/RTR-RapazesTechReformed/store-manager-api.git
 git clone https://github.com/RTR-RapazesTechReformed/docker-compose-arrastech.git
 git clone -b feature/deploy-init-actions https://github.com/RTR-RapazesTechReformed/card-scanner.git
 git clone https://github.com/RTR-RapazesTechReformed/store-manager-price-model.git
